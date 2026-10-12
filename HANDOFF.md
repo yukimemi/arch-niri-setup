@@ -4,11 +4,11 @@ This is a generic, public note, not a saved conversation or credential file.
 
 ## User intent
 
-Use an installed Arch Linux system with niri, Chromium, a usable terminal and oh-my-pi. Preserve existing operating systems, disk partitions, login credentials and unrelated configurations. Never assume that a fresh installation is still required.
+Use an installed Arch Linux system with niri, Chromium, a usable terminal, Japanese input with Fcitx5/Mozc, gh, yay and oh-my-pi. Preserve existing operating systems, disk partitions, login credentials and unrelated configurations. Never assume that a fresh installation is still required.
 
 ## What these scripts do
 
-The desktop script installs packages with a complete Arch system update, creates normal-user niri settings, installs a SHA256-verified OMP v18.10.0 in ~/arch-handoff/bin/omp, and enables greetd and NetworkManager only when selected by its safeguards. It does not partition/format disks, install Arch itself, move credentials, change passwords, enable autologin or reboot. Differing configuration replacement requires explicit consent and backups.
+The desktop script installs packages with a complete Arch system update, creates normal-user niri, Fcitx5 and Chromium settings, installs the latest OMP through https://omp.sh/install as the normal user, and enables greetd and NetworkManager only when selected by its safeguards. The official OMP installer chooses compatible existing Bun or a SHA256-verified prebuilt binary; there is no bundled or pinned OMP. Bash/Zsh login profiles receive the user-local binary PATH after consent and backup when a file already exists. Existing yay is preserved; otherwise the reviewed, SHA256-pinned yay source is built as the normal user and installed with pacman. The script does not partition/format disks, install Arch itself, move credentials, change passwords, enable autologin or reboot. Differing configuration replacement requires explicit consent and backups.
 
 ## First assistant action
 
@@ -19,25 +19,33 @@ Read-only inspection first: identify live ISO versus installed root, current use
 Inside niri, in the normal-user terminal (not sudo):
 
 ```sh
+export PATH="$HOME/.local/bin:$HOME/.bun/bin:$PATH" # If needed in an existing terminal
 cd ~/arch-handoff
-./bin/omp login openai-codex
-./bin/omp --cwd . @HANDOFF.md
+omp login openai-codex
+omp --cwd . @HANDOFF.md
 ```
 
 Chromium handles the same-machine localhost callback. Keep the login terminal running. If no browser opens, launch Chromium and paste the printed URL. Use the normal user and keep the browser sandbox enabled.
 
-For an installed headless user's workspace, OMP v18.10.0 instead supports:
+For an installed headless user's workspace, use the separate device-code flow:
 
 ```sh
-~/arch-handoff/bin/omp login openai-codex-device
+omp login openai-codex-device
 ```
 
 Open https://auth.openai.com/codex/device on a phone or another trusted browser and enter the terminal's one-time code. Enable device-code login in personal ChatGPT security settings or via the workspace administrator first. Do not substitute the browser OAuth command for this headless flow. Account access and policy still need to permit login. Never print, commit or copy provider tokens into this repository or shared installer storage.
 
-For live-ISO root, bootstrap uses `/run/omp-handoff` to avoid archiso's small COW overlay. Use `/run/omp-handoff/bin/omp login openai-codex-device` there, or the exact path printed by bootstrap.
 
 Live-ISO /root is volatile; authentication and work there are not preserved by reboot. The installed normal user should authenticate afresh. This note does not migrate the Windows process, previous chat, global settings or account database.
 
 ## Desktop controls
 
 Super+T: terminal; Super+D: launcher; Super+B: Chromium; Super+arrows: navigate; Super+PageUp/PageDown: workspaces; Super+Shift+E: confirmed logout. Ctrl+Alt+F2 switches to a recovery text console. Normal-user `niri-session -l` starts a session from a TTY when no compositor is already running.
+
+## Japanese input and tools
+
+Fcitx5 + Mozc starts via the package's XDG autostart in the niri systemd session. Muhenkan (無変換) turns IME off; Henkan (変換) turns IME on; repeated presses retain that state. Super+Space toggles. With Japanese input enabled, type `nihongo`, Space, then Enter to convert and commit `日本語`.
+
+Relevant user files: `~/.config/niri/config.kdl`, `~/.config/fcitx5/config`, `~/.config/fcitx5/profile`, and `~/.config/chromium-flags.conf`. Existing applications retain their old environment; save work and reopen Chromium for its Wayland IME flags to take effect.
+
+Authenticate GitHub with `gh auth login` as the normal user, never sudo. Run yay as the normal user and review AUR PKGBUILDs before installing. Neither tool imports credentials from another machine.

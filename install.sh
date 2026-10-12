@@ -16,18 +16,13 @@ uid=$(id -u "$user") || fail 'Create a normal user before running setup.'
 [[ $uid -ge 1000 && $uid -ne 65534 ]] || fail 'The target must be a normal user, not root.'
 
 # Arch does not support partial upgrades: update the system when adding dependencies.
-pacman -Syu --needed curl jq diffutils
+pacman -Syu --needed curl diffutils
 bundle=$(mktemp -d /tmp/arch-niri-setup.XXXXXXXX)
 trap 'rm -rf -- "$bundle"' EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
-base=https://raw.githubusercontent.com/yukimemi/arch-niri-setup/v1.1.1
+base=https://raw.githubusercontent.com/yukimemi/arch-niri-setup/v1.2.0
 curl -fsSL "$base/setup-niri.sh" -o "$bundle/setup-niri.sh"
 curl -fsSL "$base/HANDOFF.md" -o "$bundle/HANDOFF.md"
-expected=d5c6f92cabc231b4fb94c47322fc67b3c473c3b107339237a4b2f16505b38342
-metadata=$(curl -fsSL 'https://build.stencil.so/api/products/omp/versions/18.10.0/linux-x86_64')
-url=$(jq -er --arg expected "$expected" 'select(.build.version == "18.10.0" and .file.name == "omp-linux-x64" and .file.sha256 == $expected) | .download | select(startswith("https://"))' <<< "$metadata") || fail 'Unexpected official OMP build metadata.'
-curl -fsSL "$url" -o "$bundle/omp-linux-x64"
-digest=$(sha256sum < "$bundle/omp-linux-x64")
-[[ ${digest%% *} == "$expected" ]] || fail 'OMP SHA256 mismatch; desktop setup was not run.'
+curl -fsSL "$base/yay.PKGBUILD" -o "$bundle/yay.PKGBUILD"
 bash "$bundle/setup-niri.sh" "$user"
