@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.1
+
+- Create the workspace parent explicitly with mode 700; mkdir's mode option does not apply to implicitly created parents.
+
 ## v1.1.0
 
 - Use Chromium from the official Arch repository for the requested niri desktop.

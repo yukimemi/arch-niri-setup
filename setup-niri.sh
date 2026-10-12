@@ -185,7 +185,7 @@ as_user niri validate --config "$stage/config.kdl"
 if [[ -e /etc/greetd/config.toml ]] && ! cmp -s "$stage/greetd.toml" /etc/greetd/config.toml && ! "$greetd_approved"; then
     consent 'The greetd package supplied a differing /etc/greetd/config.toml.'
 fi
-as_user mkdir -p -m 700 -- "$home/.config/niri" "$workspace/bin"
+as_user mkdir -p -m 700 -- "$home/.config" "$home/.config/niri" "$workspace" "$workspace/bin"
 backup_user_file() {
     local backup
     backup=$(as_user mktemp "$1.backup.XXXXXXXX")

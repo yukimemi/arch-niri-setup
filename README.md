@@ -18,7 +18,7 @@ curl がなければ、先に `sudo pacman -Syu --needed curl` を実行して�
 通常ユーザーでログインして、以下を一度実行します。まずファイルとしてダウンロードし、成功した場合だけ sudo で実行します。
 
 ```bash
-(f=$(mktemp) && trap 'rm -f "$f"' EXIT && curl -fsSL https://raw.githubusercontent.com/yukimemi/arch-niri-setup/v1.1.0/install.sh -o "$f" && sudo bash "$f" "$USER")
+(f=$(mktemp) && trap 'rm -f "$f"' EXIT && curl -fsSL https://raw.githubusercontent.com/yukimemi/arch-niri-setup/v1.1.1/install.sh -o "$f" && sudo bash "$f" "$USER")
 ```
 
 root で操作している場合は、ダウンロードした `install.sh` を `bash install.sh EXISTING_USER` で実行します。`EXISTING_USER` は作成済みの通常ユーザー名です。
@@ -86,6 +86,13 @@ bash bootstrap.sh                 # 既存認証で会話を開始
 ```
 
 ライブISOの小さなCOW領域にバイナリを置かないよう、live/rootでは `/run/omp-handoff` を使います。/runとliveの/rootは再起動すると消えます。認証情報を移す処理は含みません。インストール後の通常ユーザーでは改めて認証します。公開HANDOFF.mdは汎用メモで、以前の会話そのものや個別PCの情報は含みません。
+
+## 検証範囲
+
+- 隔離した実際の x86_64 Arch 環境の ext4 root で、公開インストーラーのパッケージ導入・設定保存・サービス有効化まで実行しました。
+- 実際の niri による設定検証、通常ユーザーの OMP v18.10.0 起動、Chromium のバージョン確認を実行しました。
+- ワークスペースの所有者・700 権限と、修正版デスクトップスクリプトの再実行成功を確認しました。
+- 実機の GPU、tuigreet/PAM ログイン、niri の画面表示、ブラウザ OAuth は未確認です。GUI のない chroot での Chromium headless 描画はタイムアウトし、画面表示の証明には使っていません。サンドボックス無効化で回避していません。
 
 ## 参考
 
