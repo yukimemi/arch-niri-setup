@@ -12,7 +12,7 @@ fail() { printf 'setup-niri: %s\n' "$*" >&2; exit 1; }
 [[ $(uname -s) == Linux && $(uname -m) == x86_64 ]] || fail 'An x86_64 Linux system is required.'
 [[ $EUID == 0 ]] || fail 'Run this script as root (or through sudo).'
 [[ -f /etc/arch-release ]] || fail 'This script requires installed Arch Linux.'
-for command in findmnt getent id stat readlink pacman systemctl runuser sha256sum cmp install mktemp cp mv chmod rm; do
+for command in findmnt getent id stat readlink pacman systemctl runuser sha256sum install mktemp cp mv chmod rm; do
     command -v "$command" >/dev/null 2>&1 || fail "Required command is missing: $command"
 done
 root_type=$(findmnt -n -o FSTYPE -T /) || fail 'Cannot determine the root filesystem.'
@@ -93,6 +93,10 @@ while read -r service rest; do
             ;;
     esac
 done <<< "$network_units"
+# cmp is in diffutils, which minimal Arch base does not include.
+if ! command -v cmp >/dev/null 2>&1; then
+    pacman -Syu --needed diffutils
+fi
 stage=$(mktemp -d /tmp/setup-niri.XXXXXXXX)
 trap 'rm -rf -- "$stage"' EXIT
 trap 'exit 130' INT

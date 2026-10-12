@@ -18,7 +18,7 @@ curl がなければ、先に `sudo pacman -Syu --needed curl` を実行して�
 通常ユーザーでログインして、以下を一度実行します。まずファイルとしてダウンロードし、成功した場合だけ sudo で実行します。
 
 ```bash
-(f=$(mktemp) && trap 'rm -f "$f"' EXIT && curl -fsSL https://raw.githubusercontent.com/yukimemi/arch-niri-setup/v1.0.0/install.sh -o "$f" && sudo bash "$f" "$USER")
+(f=$(mktemp) && trap 'rm -f "$f"' EXIT && curl -fsSL https://raw.githubusercontent.com/yukimemi/arch-niri-setup/v1.0.1/install.sh -o "$f" && sudo bash "$f" "$USER")
 ```
 
 root で操作している場合は、ダウンロードした `install.sh` を `bash install.sh EXISTING_USER` で実行します。`EXISTING_USER` は作成済みの通常ユーザー名です。
@@ -74,6 +74,8 @@ Firefox で認証します。自動で開かなければ Super+B で Firefox を
 ライブISOのrootでbootstrapを実行した場合は `/run/omp-handoff/bin/omp login openai-codex-device` を使います。表示された実際のインストール先を確認してください。
 
 ## オフラインの OMP 起動スクリプト
+
+オフライン補助スクリプトには Bash/coreutils/diffutils が必要です。ライブISOには含まれ、公開デスクトップインストーラーも必要なユーティリティを導入します。
 
 `bootstrap.sh` は、同じディレクトリに公式 Linux バイナリ `omp-linux-x64` と `HANDOFF.md` を置いた場合の補助スクリプトです。バイナリをこの Git リポジトリには保存しません。
 
