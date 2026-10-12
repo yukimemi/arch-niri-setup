@@ -124,7 +124,7 @@ spawn-at-startup "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
 binds {
     Mod+T hotkey-overlay-title="Terminal" { spawn "alacritty"; }
     Mod+D hotkey-overlay-title="Launcher" { spawn "fuzzel"; }
-    Mod+B hotkey-overlay-title="Firefox" { spawn "firefox"; }
+    Mod+B hotkey-overlay-title="Chromium" { spawn "chromium"; }
     Mod+Shift+E hotkey-overlay-title="Log out (confirmation)" { quit; }
     Mod+Q { close-window; }
     Mod+Left { focus-column-left; }
@@ -168,14 +168,14 @@ if [[ -e /etc/greetd/config.toml ]] && ! cmp -s "$stage/greetd.toml" /etc/greetd
     consent 'Existing /etc/greetd/config.toml differs.'
     greetd_approved=true
 fi
-printf '\nUpdating all Arch packages and installing niri + Firefox. Review pacman prompts.\n'
-desktop_packages=(niri firefox alacritty fuzzel waybar mako
+printf '\nUpdating all Arch packages and installing niri + Chromium. Review pacman prompts.\n'
+desktop_packages=(niri chromium alacritty fuzzel waybar mako
     xdg-desktop-portal-gnome xdg-desktop-portal-gtk polkit-gnome
     xwayland-satellite xdg-utils noto-fonts noto-fonts-cjk ttf-dejavu
     greetd greetd-tuigreet)
 if "$networkmanager_enable"; then desktop_packages+=(networkmanager); fi
 pacman -Syu --needed "${desktop_packages[@]}"
-for command in niri niri-session tuigreet firefox alacritty; do
+for command in niri niri-session tuigreet chromium alacritty; do
     command -v "$command" >/dev/null 2>&1 || fail "Installed command is missing: $command"
 done
 [[ -x /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 ]] || fail 'Installed polkit agent is missing.'
@@ -227,11 +227,11 @@ printf 'At your next normal installed-Arch boot, log into tuigreet on tty1 as %s
 printf 'If already logged into a normal-user text console, start: niri-session -l\n'
 printf 'If greetd was already running, its new configuration takes effect at its next restart/boot; this script did not restart it.\n'
 printf 'Fallback: Ctrl+Alt+F2 opens tty2; log in there as %s and run niri-session -l if no graphical session is active.\n' "$user"
-printf 'Inside niri: Super+T = terminal, Super+D = launcher, Super+B = Firefox, Super+Shift+E = logout.\n'
+printf 'Inside niri: Super+T = terminal, Super+D = launcher, Super+B = Chromium, Super+Shift+E = logout.\n'
 printf 'Super+arrows navigates windows; Super+PageUp/PageDown changes workspaces.\n'
 printf 'In that NORMAL-USER terminal (not sudo/root), run exactly:\n'
 printf '  cd %q\n  ./bin/omp login openai-codex\n' "$workspace"
-printf 'Firefox should open the browser OAuth page; finish it and return to the terminal.\n'
+printf 'Chromium should open the browser OAuth page; finish it and return to the terminal.\n'
 printf 'If it does not open, press Super+B and paste the URL printed by OMP; keep OMP running for the localhost callback.\n'
 printf 'Then start the handoff conversation:\n  ./bin/omp --cwd . @HANDOFF.md\n'
 printf 'No credentials were imported/exported. Login requires working internet and your own permitted account.\n'

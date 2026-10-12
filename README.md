@@ -1,6 +1,6 @@
-# Arch Linux: niri + Firefox + oh-my-pi
+# Arch Linux: niri + Chromium + oh-my-pi
 
-インストール済みの Arch Linux に、niri デスクトップと Firefox、oh-my-pi (OMP) を導入する個人用スクリプトです。ディスク分割、フォーマット、OS のインストール、パスワード変更、認証情報の移送、自動ログイン、自動再起動は行いません。
+インストール済みの Arch Linux に、niri デスクトップと Chromium、oh-my-pi (OMP) を導入する個人用スクリプトです。ディスク分割、フォーマット、OS のインストール、パスワード変更、認証情報の移送、自動ログイン、自動再起動は行いません。
 
 ## 前提
 
@@ -18,7 +18,7 @@ curl がなければ、先に `sudo pacman -Syu --needed curl` を実行して�
 通常ユーザーでログインして、以下を一度実行します。まずファイルとしてダウンロードし、成功した場合だけ sudo で実行します。
 
 ```bash
-(f=$(mktemp) && trap 'rm -f "$f"' EXIT && curl -fsSL https://raw.githubusercontent.com/yukimemi/arch-niri-setup/v1.0.2/install.sh -o "$f" && sudo bash "$f" "$USER")
+(f=$(mktemp) && trap 'rm -f "$f"' EXIT && curl -fsSL https://raw.githubusercontent.com/yukimemi/arch-niri-setup/v1.1.0/install.sh -o "$f" && sudo bash "$f" "$USER")
 ```
 
 root で操作している場合は、ダウンロードした `install.sh` を `bash install.sh EXISTING_USER` で実行します。`EXISTING_USER` は作成済みの通常ユーザー名です。
@@ -28,7 +28,7 @@ root で操作している場合は、ダウンロードした `install.sh` を 
 ## 導入するもの
 
 - niri、alacritty、fuzzel、waybar、mako
-- Firefox、xdg-utils、デスクトップポータル、polkit 認証エージェント
+- Chromium、xdg-utils、デスクトップポータル、polkit 認証エージェント
 - xwayland-satellite、日本語を表示できるフォント、jp キーボード配列
 - greetd + tuigreet のパスワード付きログイン
 - NetworkManager（既存の他マネージャーが有効でない場合。Wi-Fi設定は `nmtui`）
@@ -44,7 +44,7 @@ greetd と、採用する場合の NetworkManager は **有効化のみ**。既�
 |---|---|
 | Super+T | ターミナル |
 | Super+D | ランチャー |
-| Super+B | Firefox |
+| Super+B | Chromium |
 | Super+矢印 | ウィンドウ移動 |
 | Super+PageUp / PageDown | ワークスペース移動 |
 | Super+Shift+E | 確認付きログアウト |
@@ -61,7 +61,7 @@ cd ~/arch-handoff
 ./bin/omp --cwd . @HANDOFF.md
 ```
 
-Firefox で認証します。自動で開かなければ Super+B で Firefox を開き、OMP が表示した URL を貼り付けます。同じ PC の localhost コールバックを使うため、認証が終わるまでターミナルを閉じないでください。
+Chromium で認証します。自動で開かなければ Super+B で Chromium を開き、OMP が表示した URL を貼り付けます。同じ PC の localhost コールバックを使うため、認証が終わるまでターミナルを閉じないでください。Chromium は Arch 公式リポジトリ版で、現在の版は Wayland を標準サポートします。サンドボックス無効化の設定は追加しません。
 
 ローカルのブラウザがないインストール済み環境では、次の別フローを使えます。
 

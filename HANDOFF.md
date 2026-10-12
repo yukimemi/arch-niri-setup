@@ -4,7 +4,7 @@ This is a generic, public note, not a saved conversation or credential file.
 
 ## User intent
 
-Use an installed Arch Linux system with niri, Firefox, a usable terminal and oh-my-pi. Preserve existing operating systems, disk partitions, login credentials and unrelated configurations. Never assume that a fresh installation is still required.
+Use an installed Arch Linux system with niri, Chromium, a usable terminal and oh-my-pi. Preserve existing operating systems, disk partitions, login credentials and unrelated configurations. Never assume that a fresh installation is still required.
 
 ## What these scripts do
 
@@ -24,7 +24,7 @@ cd ~/arch-handoff
 ./bin/omp --cwd . @HANDOFF.md
 ```
 
-Firefox handles the same-machine localhost callback. Keep the login terminal running. If no browser opens, launch Firefox and paste the printed URL.
+Chromium handles the same-machine localhost callback. Keep the login terminal running. If no browser opens, launch Chromium and paste the printed URL. Use the normal user and keep the browser sandbox enabled.
 
 For an installed headless user's workspace, OMP v18.10.0 instead supports:
 
@@ -40,4 +40,4 @@ Live-ISO /root is volatile; authentication and work there are not preserved by r
 
 ## Desktop controls
 
-Super+T: terminal; Super+D: launcher; Super+B: Firefox; Super+arrows: navigate; Super+PageUp/PageDown: workspaces; Super+Shift+E: confirmed logout. Ctrl+Alt+F2 switches to a recovery text console. Normal-user `niri-session -l` starts a session from a TTY when no compositor is already running.
+Super+T: terminal; Super+D: launcher; Super+B: Chromium; Super+arrows: navigate; Super+PageUp/PageDown: workspaces; Super+Shift+E: confirmed logout. Ctrl+Alt+F2 switches to a recovery text console. Normal-user `niri-session -l` starts a session from a TTY when no compositor is already running.

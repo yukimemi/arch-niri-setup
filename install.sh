@@ -21,7 +21,7 @@ bundle=$(mktemp -d /tmp/arch-niri-setup.XXXXXXXX)
 trap 'rm -rf -- "$bundle"' EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
-base=https://raw.githubusercontent.com/yukimemi/arch-niri-setup/v1.0.2
+base=https://raw.githubusercontent.com/yukimemi/arch-niri-setup/v1.1.0
 curl -fsSL "$base/setup-niri.sh" -o "$bundle/setup-niri.sh"
 curl -fsSL "$base/HANDOFF.md" -o "$bundle/HANDOFF.md"
 expected=d5c6f92cabc231b4fb94c47322fc67b3c473c3b107339237a4b2f16505b38342

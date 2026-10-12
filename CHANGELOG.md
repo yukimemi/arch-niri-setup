@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.1.0
+
+- Use Chromium from the official Arch repository for the requested niri desktop.
+- Update the browser key binding and same-machine OAuth instructions; retain the browser sandbox.
+
 ## v1.0.2
 
 - Handle fresh Arch systems with no enabled network manager: enumerate all enabled units before filtering network services.
