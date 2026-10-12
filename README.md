@@ -15,11 +15,13 @@ curl がなければ、先に `sudo pacman -Syu --needed curl` を実行して�
 
 ## 実行
 
-通常ユーザーでログインして、以下を一度実行します。まずファイルとしてダウンロードし、成功した場合だけ sudo で実行します。
+通常ユーザーでログインして、`install.sh` がないディレクトリで以下を実行します。まずファイルとしてダウンロードし、成功した場合だけ sudo で実行します。
 
 ```bash
-(f=$(mktemp) && trap 'rm -f "$f"' EXIT && curl -fsSL https://raw.githubusercontent.com/yukimemi/arch-niri-setup/v1.1.1/install.sh -o "$f" && sudo bash "$f" "$USER")
+curl -fLO https://github.com/yukimemi/arch-niri-setup/raw/v1.1.1/install.sh && sudo bash install.sh "$USER"
 ```
+
+終わったら、ダウンロードしたファイルは `rm install.sh` で削除できます。
 
 root で操作している場合は、ダウンロードした `install.sh` を `bash install.sh EXISTING_USER` で実行します。`EXISTING_USER` は作成済みの通常ユーザー名です。
 
