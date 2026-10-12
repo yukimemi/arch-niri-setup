@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.2
+
+- Handle fresh Arch systems with no enabled network manager: enumerate all enabled units before filtering network services.
+
 ## v1.0.1
 
 - Install diffutils explicitly: minimal Arch base does not provide cmp.

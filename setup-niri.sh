@@ -82,8 +82,8 @@ if [[ -e /etc/greetd/config.toml ]]; then
 fi
 # Include per-interface dhcpcd and netctl profiles, not just singleton services.
 networkmanager_enable=true
-network_units=$(systemctl --root=/ list-unit-files --state=enabled,enabled-runtime --no-legend --no-pager \
-    'systemd-networkd.service' 'connman.service' 'dhcpcd*.service' 'netctl*.service') \
+# Filter in Bash: systemctl returns 1 when supplied patterns match no units.
+network_units=$(systemctl --root=/ list-unit-files --state=enabled,enabled-runtime --no-legend --no-pager) \
     || fail 'Cannot inspect existing network manager units.'
 while read -r service rest; do
     case "$service" in
