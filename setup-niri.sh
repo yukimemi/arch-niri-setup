@@ -54,6 +54,7 @@ config="$home/.config/niri/config.kdl"
 fcitx_config="$home/.config/fcitx5/config"
 fcitx_profile="$home/.config/fcitx5/profile"
 chromium_flags="$home/.config/chromium-flags.conf"
+noctalia_config="$home/.config/noctalia/config.toml"
 login_profile=''
 case "${shell##*/}" in
     bash) login_profile="$home/.bash_profile" ;;
@@ -62,7 +63,7 @@ esac
 omp_path='export PATH="$HOME/.local/bin:$HOME/.bun/bin:$PATH"'
 # All writes inside HOME run as the user, never as root.
 as_user() { runuser -u "$user" -- env HOME="$home" USER="$user" LOGNAME="$user" XDG_CONFIG_HOME="$home/.config" PATH="$home/.local/bin:$home/.bun/bin:$PATH" "$@"; }
-for directory in "$home/.config" "$home/.config/niri" "$home/.config/fcitx5" "$home/.local" "$home/.local/bin" "$workspace"; do
+for directory in "$home/.config" "$home/.config/niri" "$home/.config/fcitx5" "$home/.config/noctalia" "$home/.local" "$home/.local/bin" "$home/Pictures" "$home/Pictures/Screenshots" "$workspace"; do
     if [[ -e $directory || -L $directory ]]; then
         [[ -d $directory && ! -L $directory && $(stat -c %u -- "$directory") == "$uid" ]] || fail "Unsafe existing user directory: $directory"
         if [[ $directory == "$workspace" ]]; then
@@ -70,7 +71,7 @@ for directory in "$home/.config" "$home/.config/niri" "$home/.config/fcitx5" "$h
         fi
     fi
 done
-for file in "$config" "$fcitx_config" "$fcitx_profile" "$chromium_flags" "$workspace/HANDOFF.md" "$login_profile"; do
+for file in "$config" "$fcitx_config" "$fcitx_profile" "$chromium_flags" "$noctalia_config" "$workspace/HANDOFF.md" "$login_profile"; do
     if [[ -e $file || -L $file ]]; then
         [[ -f $file && ! -L $file && $(stat -c %u -- "$file") == "$uid" ]] || fail "Unsafe existing user file: $file"
     fi
@@ -130,14 +131,26 @@ environment {
     XMODIFIERS "@im=fcitx"
     QT_IM_MODULE "fcitx"
 }
-spawn-at-startup "waybar"
-spawn-at-startup "mako"
-spawn-at-startup "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
+spawn-at-startup "noctalia"
+screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
+window-rule {
+    match app-id="dev.noctalia.Noctalia"
+    open-floating true
+    default-column-width { fixed 1000; }
+    default-window-height { fixed 740; }
+}
 binds {
     Mod+T hotkey-overlay-title="Terminal" { spawn "alacritty"; }
-    Mod+D hotkey-overlay-title="Launcher" { spawn "fuzzel"; }
+    Mod+D hotkey-overlay-title="Noctalia launcher" { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
+    Mod+S hotkey-overlay-title="Noctalia control center" { spawn "noctalia" "msg" "panel-toggle" "control-center"; }
+    Mod+Comma hotkey-overlay-title="Noctalia settings" { spawn "noctalia" "msg" "settings-toggle"; }
     Mod+B hotkey-overlay-title="Chromium" { spawn "chromium"; }
     Mod+Space hotkey-overlay-title="Japanese input on/off" { spawn "fcitx5-remote" "-t"; }
+    XF86MonBrightnessDown hotkey-overlay-title="Brightness down" { spawn "noctalia" "msg" "brightness-down" "current" "10%"; }
+    XF86MonBrightnessUp hotkey-overlay-title="Brightness up" { spawn "noctalia" "msg" "brightness-up" "current" "10%"; }
+    Print hotkey-overlay-title="Screenshot region" { screenshot; }
+    Ctrl+Print hotkey-overlay-title="Screenshot screen" { screenshot-screen; }
+    Alt+Print hotkey-overlay-title="Screenshot window" { screenshot-window; }
     Mod+Shift+E hotkey-overlay-title="Log out (confirmation)" { quit; }
     Mod+Q { close-window; }
     Mod+Left { focus-column-left; }
@@ -189,6 +202,26 @@ cat > "$stage/chromium-flags.conf" <<'FLAGS'
 --enable-wayland-ime
 --wayland-text-input-version=3
 FLAGS
+cat > "$stage/noctalia.toml" <<'TOML'
+[shell]
+lang = "ja"
+setup_wizard_enabled = false
+polkit_agent = true
+clipboard_enabled = false
+
+[brightness]
+minimum_brightness = 0.05
+
+[notification]
+enable_daemon = true
+filter_order = ["screenshots"]
+
+[notification.filter.screenshots]
+enabled = true
+match = "niri"
+match_content = "^Screenshot captured$"
+override_duration = 5000
+TOML
 cat > "$stage/greetd.toml" <<'TOML'
 [terminal]
 vt = 1
@@ -197,7 +230,7 @@ vt = 1
 command = "/usr/bin/tuigreet --time --cmd /usr/bin/niri-session"
 user = "greeter"
 TOML
-chmod 644 "$stage/config.kdl" "$stage/greetd.toml" "$stage/fcitx5-config" "$stage/fcitx5-profile" "$stage/chromium-flags.conf"
+chmod 644 "$stage/config.kdl" "$stage/greetd.toml" "$stage/fcitx5-config" "$stage/fcitx5-profile" "$stage/chromium-flags.conf" "$stage/noctalia.toml"
 consent() {
     local answer
     printf '\n%s\nType yes to replace it with a backed-up copy; anything else aborts: ' "$1" >&2
@@ -210,28 +243,29 @@ if [[ -e $workspace/HANDOFF.md ]] && ! cmp -s "$stage/HANDOFF.md" "$workspace/HA
 if [[ -e $fcitx_config ]] && ! cmp -s "$stage/fcitx5-config" "$fcitx_config"; then consent "Existing Fcitx5 hotkeys differ: $fcitx_config"; fi
 if [[ -e $fcitx_profile ]] && ! cmp -s "$stage/fcitx5-profile" "$fcitx_profile"; then consent "Existing Fcitx5 input methods differ: $fcitx_profile"; fi
 if [[ -e $chromium_flags ]] && ! cmp -s "$stage/chromium-flags.conf" "$chromium_flags"; then consent "Existing Chromium flags differ: $chromium_flags"; fi
+if [[ -e $noctalia_config ]] && ! cmp -s "$stage/noctalia.toml" "$noctalia_config"; then consent "Existing Noctalia configuration differs: $noctalia_config"; fi
 if "$profile_add" && [[ -e $login_profile ]]; then consent "Adding OMP to the login-shell PATH in: $login_profile"; fi
 greetd_approved=false
 if [[ -e /etc/greetd/config.toml ]] && ! cmp -s "$stage/greetd.toml" /etc/greetd/config.toml; then
     consent 'Existing /etc/greetd/config.toml differs.'
     greetd_approved=true
 fi
-printf '\nUpdating all Arch packages and installing niri + Chromium. Review pacman prompts.\n'
-desktop_packages=(niri chromium alacritty fuzzel waybar mako
-    xdg-desktop-portal-gnome xdg-desktop-portal-gtk polkit-gnome
+printf '\nUpdating all Arch packages and installing niri + Noctalia + Chromium. Review pacman prompts.\n'
+desktop_packages=(niri noctalia upower chromium alacritty
+    xdg-desktop-portal-gnome xdg-desktop-portal-gtk
     xwayland-satellite xdg-utils noto-fonts noto-fonts-cjk ttf-dejavu
     greetd greetd-tuigreet github-cli git sudo
     fcitx5 fcitx5-mozc fcitx5-configtool fcitx5-gtk fcitx5-qt)
 if "$networkmanager_enable"; then desktop_packages+=(networkmanager); fi
 if "$yay_install"; then desktop_packages+=(base-devel go); fi
 pacman -Syu --needed "${desktop_packages[@]}"
-for command in niri niri-session tuigreet chromium alacritty fcitx5 fcitx5-remote fcitx5-configtool gh; do
+for command in niri niri-session noctalia tuigreet chromium alacritty fcitx5 fcitx5-remote fcitx5-configtool gh; do
     command -v "$command" >/dev/null 2>&1 || fail "Installed command is missing: $command"
 done
-[[ -x /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 ]] || fail 'Installed polkit agent is missing.'
 getent passwd greeter >/dev/null || fail 'greetd package did not provide the greeter account.'
 # Real installed niri validates the candidate as the normal user, before publishing.
 as_user niri validate --config "$stage/config.kdl"
+as_user noctalia config validate "$stage/noctalia.toml"
 if "$yay_install"; then
     printf '\nBuilding the reviewed, SHA256-pinned yay source as %s, not root.\n' "$user"
     install -d -o "$uid" -g "$gid" -m 700 -- "$stage/yay-build"
@@ -246,7 +280,7 @@ as_user yay --version
 if [[ -e /etc/greetd/config.toml ]] && ! cmp -s "$stage/greetd.toml" /etc/greetd/config.toml && ! "$greetd_approved"; then
     consent 'The greetd package supplied a differing /etc/greetd/config.toml.'
 fi
-as_user mkdir -p -m 700 -- "$home/.config" "$home/.config/niri" "$home/.config/fcitx5" "$home/.local" "$home/.local/bin" "$workspace"
+as_user mkdir -p -m 700 -- "$home/.config" "$home/.config/niri" "$home/.config/fcitx5" "$home/.config/noctalia" "$home/.local" "$home/.local/bin" "$home/Pictures" "$home/Pictures/Screenshots" "$workspace"
 printf '\nInstalling latest OMP through https://omp.sh/install as %s, not root.\n' "$user"
 curl -fsSL https://omp.sh/install -o "$stage/omp-install.sh"
 chmod 644 "$stage/omp-install.sh"
@@ -273,6 +307,7 @@ install_user_file "$stage/config.kdl" "$config" 600
 install_user_file "$stage/fcitx5-config" "$fcitx_config" 600
 install_user_file "$stage/fcitx5-profile" "$fcitx_profile" 600
 install_user_file "$stage/chromium-flags.conf" "$chromium_flags" 600
+install_user_file "$stage/noctalia.toml" "$noctalia_config" 600
 install_user_file "$stage/HANDOFF.md" "$workspace/HANDOFF.md" 600
 if "$profile_add"; then
     profile_stage=$(as_user mktemp "$home/.omp-profile.XXXXXXXX")
@@ -283,6 +318,7 @@ if "$profile_add"; then
     profile_stage=''
 fi
 as_user niri validate --config "$config"
+as_user noctalia config validate
 if ! cmp -s "$stage/greetd.toml" /etc/greetd/config.toml; then
     if [[ -e /etc/greetd/config.toml ]]; then
         backup=$(mktemp /etc/greetd/config.toml.backup.XXXXXXXX)
@@ -301,8 +337,16 @@ printf 'At your next normal installed-Arch boot, log into tuigreet on tty1 as %s
 printf 'If already logged into a normal-user text console, start: niri-session -l\n'
 printf 'If greetd was already running, its new configuration takes effect at its next restart/boot; this script did not restart it.\n'
 printf 'Fallback: Ctrl+Alt+F2 opens tty2; log in there as %s and run niri-session -l if no graphical session is active.\n' "$user"
-printf 'Inside niri: Super+T = terminal, Super+D = launcher, Super+B = Chromium, Super+Shift+E = logout.\n'
+printf 'Inside niri: Super+T = terminal, Super+D = Noctalia launcher, Super+S = control center, Super+Comma = settings.\n'
+printf 'Super+B = Chromium, Super+Space = IME toggle, Super+Shift+E = confirmed logout.\n'
 printf 'Super+arrows navigates windows; Super+PageUp/PageDown changes workspaces.\n'
+printf 'Brightness keys change the focused display by 10%% with a 5%% floor; backlight discovery is automatic.\n'
+printf 'Print = region screenshot, Ctrl+Print = focused screen, Alt+Print = focused window; save path is ~/Pictures/Screenshots/.\n'
+printf 'Noctalia owns notifications and polkit authentication; screenshot notifications expire after 5 seconds.\n'
+printf 'Clipboard history is disabled; ordinary copy/paste remains available.\n'
+printf 'Existing Noctalia GUI overrides are preserved and may override these defaults.\n'
+printf 'If an old Waybar/mako/authentication agent is running, save work and log out/back in for the shell cutover.\n'
+printf 'Custom user services or XDG autostart entries for old shells are not changed; disable those before using Noctalia.\n'
 printf 'In that NORMAL-USER terminal (not sudo/root), run exactly:\n'
 printf '  export PATH="$HOME/.local/bin:$HOME/.bun/bin:$PATH"\n'
 printf '  cd %q\n  omp login openai-codex\n' "$workspace"

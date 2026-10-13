@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.3.0
+
+- Replace the default Waybar, mako, fuzzel and polkit-gnome startup with maintained native Noctalia from Arch extra; retain existing packages and running sessions.
+- Configure Japanese Noctalia UI, native notifications and polkit, and UPower for laptop battery integration.
+- Add launcher, control-center and settings bindings; keep the existing Japanese IME controls.
+- Route brightness keys through Noctalia's current-monitor selection with 10% steps and a 5% minimum, without machine-specific device names.
+- Bind niri region/screen/window screenshots, create a private screenshot directory, and expire screenshot notifications after five seconds.
+- Leave clipboard history disabled while preserving normal copy/paste; retain Noctalia GUI overrides and unrelated autostart/services.
+- Apply ownership/symlink checks, explicit replacement consent and backups to the managed Noctalia configuration.
+
 ## v1.2.0
 
 - Install Fcitx5 + Mozc and GTK/Qt input modules; configure Japanese input, packaged XDG autostart and Chromium Wayland text-input-v3.

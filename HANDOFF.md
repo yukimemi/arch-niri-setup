@@ -4,11 +4,11 @@ This is a generic, public note, not a saved conversation or credential file.
 
 ## User intent
 
-Use an installed Arch Linux system with niri, Chromium, a usable terminal, Japanese input with Fcitx5/Mozc, gh, yay and oh-my-pi. Preserve existing operating systems, disk partitions, login credentials and unrelated configurations. Never assume that a fresh installation is still required.
+Use an installed Arch Linux system with niri, Noctalia as the desktop shell, Chromium, a usable terminal, Japanese input with Fcitx5/Mozc, gh, yay and oh-my-pi. Preserve existing operating systems, disk partitions, login credentials and unrelated configurations. Never assume that a fresh installation is still required.
 
 ## What these scripts do
 
-The desktop script installs packages with a complete Arch system update, creates normal-user niri, Fcitx5 and Chromium settings, installs the latest OMP through https://omp.sh/install as the normal user, and enables greetd and NetworkManager only when selected by its safeguards. The official OMP installer chooses compatible existing Bun or a SHA256-verified prebuilt binary; there is no bundled or pinned OMP. Bash/Zsh login profiles receive the user-local binary PATH after consent and backup when a file already exists. Existing yay is preserved; otherwise the reviewed, SHA256-pinned yay source is built as the normal user and installed with pacman. The script does not partition/format disks, install Arch itself, move credentials, change passwords, enable autologin or reboot. Differing configuration replacement requires explicit consent and backups.
+The desktop script installs packages with a complete Arch system update, creates normal-user niri, Noctalia, Fcitx5 and Chromium settings, installs the latest OMP through https://omp.sh/install as the normal user, and enables greetd and NetworkManager only when selected by its safeguards. Maintained native Noctalia replaces Waybar, mako, fuzzel and polkit-gnome in the generated desktop startup. Existing running shells, custom autostart entries and Noctalia GUI overrides are not changed; cut over at the next login and avoid duplicate user services. The official OMP installer chooses compatible existing Bun or a SHA256-verified prebuilt binary; there is no bundled or pinned OMP. Bash/Zsh login profiles receive the user-local binary PATH after consent and backup when a file already exists. Existing yay is preserved; otherwise the reviewed, SHA256-pinned yay source is built as the normal user and installed with pacman. The script does not partition/format disks, install Arch itself, move credentials, change passwords, enable autologin or reboot. Differing configuration replacement requires explicit consent and backups.
 
 ## First assistant action
 
@@ -40,12 +40,12 @@ Live-ISO /root is volatile; authentication and work there are not preserved by r
 
 ## Desktop controls
 
-Super+T: terminal; Super+D: launcher; Super+B: Chromium; Super+arrows: navigate; Super+PageUp/PageDown: workspaces; Super+Shift+E: confirmed logout. Ctrl+Alt+F2 switches to a recovery text console. Normal-user `niri-session -l` starts a session from a TTY when no compositor is already running.
+Super+T: terminal; Super+D: Noctalia launcher; Super+S: control center; Super+Comma: Noctalia settings; Super+B: Chromium; Super+Space: IME toggle; Super+arrows: navigate; Super+PageUp/PageDown: workspaces; Super+Shift+E: confirmed logout. Brightness keys use Noctalia in 10% steps with a 5% floor and automatic device discovery. Print: screenshot region; Ctrl+Print: screen; Alt+Print: window. Ctrl+Alt+F2 switches to a recovery text console. Normal-user `niri-session -l` starts a session from a TTY when no compositor is already running.
 
 ## Japanese input and tools
 
 Fcitx5 + Mozc starts via the package's XDG autostart in the niri systemd session. Muhenkan (無変換) turns IME off; Henkan (変換) turns IME on; repeated presses retain that state. Super+Space toggles. With Japanese input enabled, type `nihongo`, Space, then Enter to convert and commit `日本語`.
 
-Relevant user files: `~/.config/niri/config.kdl`, `~/.config/fcitx5/config`, `~/.config/fcitx5/profile`, and `~/.config/chromium-flags.conf`. Existing applications retain their old environment; save work and reopen Chromium for its Wayland IME flags to take effect.
+Relevant user files: `~/.config/niri/config.kdl`, `~/.config/noctalia/config.toml`, `~/.config/fcitx5/config`, `~/.config/fcitx5/profile`, and `~/.config/chromium-flags.conf`. Noctalia owns notifications and polkit authentication; screenshot notifications expire after 5000 ms. Clipboard history is disabled while basic copy/paste remains available. Niri screenshots save to `~/Pictures/Screenshots/`. Existing applications retain their old environment; save work and reopen Chromium for its Wayland IME flags to take effect.
 
 Authenticate GitHub with `gh auth login` as the normal user, never sudo. Run yay as the normal user and review AUR PKGBUILDs before installing. Neither tool imports credentials from another machine.
