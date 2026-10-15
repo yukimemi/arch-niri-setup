@@ -18,7 +18,7 @@ curl がなければ、先に `sudo pacman -Syu --needed curl` を実行して�
 通常ユーザーでログインして、`install.sh` がないディレクトリで以下を実行します。まずファイルとしてダウンロードし、成功した場合だけ sudo で実行します。
 
 ```bash
-curl -fLO https://github.com/yukimemi/arch-niri-setup/raw/v1.5.0/install.sh && sudo bash install.sh "$USER"
+curl -fLO https://github.com/yukimemi/arch-niri-setup/raw/v1.6.0/install.sh && sudo bash install.sh "$USER"
 ```
 
 終わったら、ダウンロードしたファイルは `rm install.sh` で削除できます。
@@ -61,6 +61,7 @@ Arch 公式 extra の `noctalia` を使います。旧 Quickshell 版ではな�
 
 | キー | 動作 |
 |---|---|
+| CapsLock | 追加の Ctrl（元の Ctrl も維持） |
 | Super+T | ターミナル |
 | Super+D | Noctalia ランチャー |
 | Super+S | Noctalia コントロールセンター |
@@ -112,6 +113,8 @@ Arch 公式 extra の `noctalia` を使います。旧 Quickshell 版ではな�
 
 
 ## 日本語入力
+
+日本語配列を維持し、niri の XKB オプション `ctrl:nocaps` で **CapsLock を追加の Ctrl** にします。Ctrl と CapsLock の交換ではなく、CapsLock による英大文字固定はなくなります。適用範囲は niri セッション内で、TTY や greetd のキーマップは変更しません。
 
 - **無変換**：IME オフ（英数字入力）
 - **変換**：IME オン（日本語入力）
@@ -174,6 +177,7 @@ Bash/Zsh ではログインプロファイルに `~/.local/bin` と `~/.bun/bin`
 
 ## 検証範囲
 
+- v1.6.0 は、実行中の niri が Wayland クライアントへ配信する実際のキーマップを取得して確認しました。変更前の CAPS は `Eisu_toggle`、変更後は `Control_L` です。CAPS と既存の左 Ctrl の両方で Ctrl 修飾の押下／解放が成立し、Caps Lock の固定が発生しないことを libxkbcommon の状態遷移で確認しました。実機設定とセットアップ生成設定の niri 検証も通過しました。物理キー押下とセットアップ全体の root 再実行は未確認です。
 - v1.5.0 は niri 26.04 / Noctalia 5.2.1 で、全画面・マウスでの範囲選択・矢印注釈の保存・範囲選択のキャンセルを実際に操作しました。キーボードフォーカスを持つ GTK/Wayland アプリで、撮影した PNG の保存データと実際の `image/png` クリップボードデータが一致しました。別の実アプリからコピーした2つの文章を履歴画面で確認し、古い文章を選ぶとライブのクリップボードへ戻ることも確認しました。Noctalia の撮影通知は5.000〜5.002秒で期限切れになりました。キーリングを使った再ログイン後の履歴復元と、v1.5.0 全体の root 実行は未確認です。
 - v1.4.0 の実機設定とセットアップが生成した設定は niri の検証を通過しました。通常セッションへ影響する `--session` やシェル自動起動を使わない隔離したネスト環境で、実際のウィンドウを使い、フォーカス・列移動・列の取り込み／分離・フローティング・ワークスペース間移動・Overview を IPC 経由で確認しました。Overview の実画面も確認しています。自動キー入力ではショートカットを発火できず、物理キーおよび複数モニターでの動作は未確認です。
 - v1.3.0 の実スクリプトのステージング処理を通常ユーザーで実行し、生成された niri・Noctalia 設定を実際のコマンドで検証しました。公開設定はバックライト名を固定せず、クリップボード履歴を無効にし、スクショ通知を5秒に設定しています。

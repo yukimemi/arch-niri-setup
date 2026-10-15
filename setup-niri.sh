@@ -119,7 +119,7 @@ cat > "$stage/config.kdl" <<'KDL'
 // Minimal installed-Arch setup; Super is Mod on the physical login session.
 // Japanese physical keymap, not a Japanese input-method engine.
 input {
-    keyboard { xkb { layout "jp"; }; }
+    keyboard { xkb { layout "jp"; options "ctrl:nocaps"; }; }
     touchpad { tap; natural-scroll; }
 }
 layout {

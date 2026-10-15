@@ -42,6 +42,8 @@ Live-ISO /root is volatile; authentication and work there are not preserved by r
 
 Window/workspace controls follow niri 26.04's official default bindings. Super+arrows or H/J/K/L: focus; add Ctrl: move the column/window; add Shift instead: focus another monitor; Ctrl+Shift: move the column to another monitor. Super+1..9 or PageUp/PageDown: workspaces; Super+O: overview; Super+V: floating; Super+Comma/Period: consume/expel windows in a column; Super+Shift+Slash: hotkey overlay. Application additions: Super+T: terminal; Super+D: Noctalia launcher; Super+S: control center; Super+Ctrl+Comma: Noctalia settings; Super+Ctrl+V: Noctalia clipboard history; Super+B: Chromium; Super+Space: IME toggle. Super+Shift+E: confirmed logout. Brightness keys use Noctalia in 10% steps with a 5% floor and automatic device discovery. Noctalia captures: Print: region; Ctrl+Print: focused screen; Alt+Print: frozen-screen annotation (replaces window-only capture). In the editor, Ctrl+S saves, Ctrl+C copies and Escape cancels. Ctrl+Alt+F2 switches to a recovery text console. Normal-user `niri-session -l` starts a session from a TTY when no compositor is already running.
 
+CapsLock is an additional Ctrl inside niri through the XKB option `ctrl:nocaps`; the original Ctrl keys and Japanese layout are retained. This is not a Ctrl/CapsLock swap. TTY and greetd keymaps are unchanged.
+
 ## Japanese input and tools
 
 Fcitx5 + Mozc starts via the package's XDG autostart in the niri systemd session. Muhenkan (無変換) turns IME off; Henkan (変換) turns IME on; repeated presses retain that state. Super+Space toggles. With Japanese input enabled, type `nihongo`, Space, then Enter to convert and commit `日本語`.

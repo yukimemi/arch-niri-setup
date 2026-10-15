@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.6.0
+
+- Map CapsLock to an additional Ctrl with niri's `ctrl:nocaps` XKB option; retain the Japanese layout and existing Ctrl keys.
+- Keep the remap scoped to niri, without changing TTY/greetd keymaps, IME hotkeys or system keyboard configuration.
+- Verify the live Wayland-delivered keymap before/after and Ctrl press/release behavior without Caps Lock; document the new mapping.
+
 ## v1.5.0
 
 - Use Noctalia's native region and fullscreen screenshot commands for Print and Ctrl+Print.
