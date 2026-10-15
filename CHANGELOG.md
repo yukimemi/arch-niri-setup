@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.5.0
+
+- Use Noctalia's native region and fullscreen screenshot commands for Print and Ctrl+Print.
+- Change Alt+Print from niri window capture to Noctalia's frozen-screen annotation editor, with explicit user approval; Ctrl+S saves and Ctrl+C copies.
+- Move screenshot save/copy policy into `[shell.screenshot]`, preserving the private screenshot directory; remove the obsolete niri screenshot path.
+- Retarget the five-second notification filter to Noctalia's native screenshot-saved notifications.
+- Enable Noctalia clipboard history with 100 unpinned entries and bind Super+Ctrl+V; prevent repeat-triggered captures and history toggling.
+- Keep Secret Service as the default encrypted-storage source without provisioning keys, keyrings or authentication settings; document session-only history when a provider is unavailable.
+- Verify real native captures, saved/clipboard PNG identity, annotation, cancellation, history selection and notification expiry on the installed niri session.
+
 ## v1.4.0
 
 - Adopt niri 26.04's official active window/workspace bindings, including H/J/K/L navigation, numeric workspaces, monitor controls, column grouping, sizing, floating, tabs, overview and wheel controls.

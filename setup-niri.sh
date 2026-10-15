@@ -132,7 +132,6 @@ environment {
     QT_IM_MODULE "fcitx"
 }
 spawn-at-startup "noctalia"
-screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 window-rule {
     match app-id="dev.noctalia.Noctalia"
     open-floating true
@@ -146,11 +145,12 @@ binds {
     Mod+Ctrl+Comma hotkey-overlay-title="Noctalia settings" { spawn "noctalia" "msg" "settings-toggle"; }
     Mod+B hotkey-overlay-title="Chromium" { spawn "chromium"; }
     Mod+Space hotkey-overlay-title="Japanese input on/off" { spawn "fcitx5-remote" "-t"; }
+    Mod+Ctrl+V repeat=false hotkey-overlay-title="Noctalia clipboard history" { spawn "noctalia" "msg" "panel-toggle" "clipboard"; }
     XF86MonBrightnessDown hotkey-overlay-title="Brightness down" { spawn "noctalia" "msg" "brightness-down" "current" "10%"; }
     XF86MonBrightnessUp hotkey-overlay-title="Brightness up" { spawn "noctalia" "msg" "brightness-up" "current" "10%"; }
-    Print hotkey-overlay-title="Screenshot region" { screenshot; }
-    Ctrl+Print hotkey-overlay-title="Screenshot screen" { screenshot-screen; }
-    Alt+Print hotkey-overlay-title="Screenshot window" { screenshot-window; }
+    Print repeat=false hotkey-overlay-title="Screenshot region" { spawn "noctalia" "msg" "screenshot-region"; }
+    Ctrl+Print repeat=false hotkey-overlay-title="Screenshot screen" { spawn "noctalia" "msg" "screenshot-fullscreen"; }
+    Alt+Print repeat=false hotkey-overlay-title="Screenshot annotate" { spawn "noctalia" "msg" "screenshot-annotate"; }
     Mod+Shift+E hotkey-overlay-title="Log out (confirmation)" { quit; }
     // Window/workspace controls follow niri 26.04's official default config.
     Mod+Shift+Slash { show-hotkey-overlay; }
@@ -303,7 +303,15 @@ cat > "$stage/noctalia.toml" <<'TOML'
 lang = "ja"
 setup_wizard_enabled = false
 polkit_agent = true
-clipboard_enabled = false
+clipboard_enabled = true
+clipboard_history_max_entries = 100
+
+[shell.screenshot]
+directory = "~/Pictures/Screenshots"
+filename_pattern = "Screenshot from %Y-%m-%d %H-%M-%S"
+save_to_file = true
+copy_to_clipboard = true
+annotate = false
 
 [brightness]
 minimum_brightness = 0.05
@@ -314,8 +322,8 @@ filter_order = ["screenshots"]
 
 [notification.filter.screenshots]
 enabled = true
-match = "niri"
-match_content = "^Screenshot captured$"
+match = "Noctalia"
+match_content = "^Screenshot saved$"
 override_duration = 5000
 TOML
 cat > "$stage/greetd.toml" <<'TOML'
@@ -438,9 +446,10 @@ printf 'Super+B = Chromium, Super+Space = IME toggle, Super+Shift+E = confirmed 
 printf 'Official niri controls: Super+arrows or H/J/K/L = focus; add Ctrl = move column/window, Shift = focus monitor.\n'
 printf 'Super+1..9 or PageUp/PageDown = workspaces; Super+O = overview; Super+V = floating; Super+Comma/Period = column grouping.\n'
 printf 'Brightness keys change the focused display by 10%% with a 5%% floor; backlight discovery is automatic.\n'
-printf 'Print = region screenshot, Ctrl+Print = focused screen, Alt+Print = focused window; save path is ~/Pictures/Screenshots/.\n'
+printf 'Noctalia screenshots: Print = region, Ctrl+Print = focused screen, Alt+Print = annotate; save path is ~/Pictures/Screenshots/.\n'
 printf 'Noctalia owns notifications and polkit authentication; screenshot notifications expire after 5 seconds.\n'
-printf 'Clipboard history is disabled; ordinary copy/paste remains available.\n'
+printf 'Super+Ctrl+V = Noctalia clipboard history (100 unpinned entries). Copied secrets may be retained; delete sensitive entries in the panel.\n'
+printf 'Persistent history requires an unlocked Secret Service keyring; without it Noctalia keeps history for this session only.\n'
 printf 'Existing Noctalia GUI overrides are preserved and may override these defaults.\n'
 printf 'If an old Waybar/mako/authentication agent is running, save work and log out/back in for the shell cutover.\n'
 printf 'Custom user services or XDG autostart entries for old shells are not changed; disable those before using Noctalia.\n'

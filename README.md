@@ -18,7 +18,7 @@ curl がなければ、先に `sudo pacman -Syu --needed curl` を実行して�
 通常ユーザーでログインして、`install.sh` がないディレクトリで以下を実行します。まずファイルとしてダウンロードし、成功した場合だけ sudo で実行します。
 
 ```bash
-curl -fLO https://github.com/yukimemi/arch-niri-setup/raw/v1.4.0/install.sh && sudo bash install.sh "$USER"
+curl -fLO https://github.com/yukimemi/arch-niri-setup/raw/v1.5.0/install.sh && sudo bash install.sh "$USER"
 ```
 
 終わったら、ダウンロードしたファイルは `rm install.sh` で削除できます。
@@ -46,7 +46,7 @@ greetd と、採用する場合の NetworkManager は **有効化のみ**。既�
 
 Arch 公式 extra の `noctalia` を使います。旧 Quickshell 版ではなく、現行のネイティブ版です。バー、ランチャー、通知、管理者認証は Noctalia にまとめ、Waybar・mako・fuzzel・polkit-gnome は新規導入・自動起動しません。既に入っている旧パッケージは削除しません。
 
-`~/.config/noctalia/config.toml` は日本語 UI、ネイティブ通知と polkit、明るさの下限5%、スクショ通知の5秒タイムアウトを設定します。クリップボード履歴は無効ですが、通常のコピー＆ペーストは使えます。明るさはディスプレイ／バックライトを自動検出し、特定の実機の `eDP-1` や `intel_backlight` を公開設定に固定しません。
+`~/.config/noctalia/config.toml` は日本語 UI、ネイティブ通知と polkit、明るさの下限5%、スクショ通知の5秒タイムアウト、ネイティブのスクショとクリップボード履歴を設定します。明るさはディスプレイ／バックライトを自動検出し、特定の実機の `eDP-1` や `intel_backlight` を公開設定に固定しません。
 
 既存の Noctalia GUI 設定 `~/.local/state/noctalia/settings.toml` と他の TOML ファイルは保持します。GUI の上書き設定は生成した基本設定より優先するため、見た目や機能が想定と違う場合は Noctalia の設定画面で確認してください。
 
@@ -67,10 +67,11 @@ Arch 公式 extra の `noctalia` を使います。旧 Quickshell 版ではな�
 | Super+Ctrl+, | Noctalia 設定 |
 | Super+B | Chromium |
 | Super+Space | IME オン／オフ切替 |
+| Super+Ctrl+V | Noctalia クリップボード履歴 |
 | 明るさ小／大キー | Noctalia で10%刻み（下限5%） |
-| Print | スクショ範囲選択 |
-| Ctrl+Print | 選択中の画面を撮影 |
-| Alt+Print | 選択中のウィンドウを撮影 |
+| Print | Noctalia スクショ範囲選択 |
+| Ctrl+Print | Noctalia で選択中の画面を撮影 |
+| Alt+Print | Noctalia の撮影＋注釈編集 |
 | Super+(矢印 / H・J・K・L) | フォーカス移動（左右は列、上下は列内のウィンドウ） |
 | Super+Ctrl+(矢印 / H・J・K・L) | 列／ウィンドウを移動 |
 | Super+Shift+(矢印 / H・J・K・L) | 別モニターへフォーカス |
@@ -97,7 +98,17 @@ Arch 公式 extra の `noctalia` を使います。旧 Quickshell 版ではな�
 
 困った場合は Ctrl+Alt+F2 で TTY に切り替えられます。
 公式標準の Home/End、ホイール操作、ウィンドウ高さ調整、ショートカット抑止の切替、Ctrl+Alt+Delete の確認付きログアウト、Super+Shift+P の画面消灯も含みます。設定の全定義は `setup-niri.sh` の `binds` を参照してください。
-スクショは niri の標準機能で `~/Pictures/Screenshots/` に保存し、クリップボードにもコピーします。Noctalia の撮影機能が要求する別の screencopy プロトコルには依存しません。新規のスクショ保存ディレクトリは対象ユーザー所有・700 権限で作成します。
+スクショはすべて Noctalia のネイティブ機能を呼びます。`[shell.screenshot]` で保存先を `~/Pictures/Screenshots/` にし、範囲・全画面撮影は PNG 保存とクリップボードへのコピーを両方行います。新規の保存ディレクトリは対象ユーザー所有・700 権限です。保存先や編集動作は Noctalia の設定画面から変更できます。コンポジターの `wlr-screencopy` 対応が必要で、niri 26.04 で実際に撮影を確認しています。
+
+**Alt+Print は以前の「ウィンドウ単体撮影」から「画面を撮って注釈編集」へ変更しました。** 注釈画面では矢印・文字・ぼかし・切り抜きなどを使えます。Ctrl+S で保存、Ctrl+C でコピーし、成功すると編集画面を閉じます。Escape はキャンセルです。Noctalia にはウィンドウ単体撮影コマンドがないため、その旧割り当ては残しません。
+
+## クリップボード履歴
+
+`Super+Ctrl+V` で Noctalia の履歴を開き、文章や画像を検索・選択して再利用できます。ピン留めを除く履歴は100件までです。通常のコピー＆ペーストも使えます。別の履歴デーモンは導入しません。
+
+コピーしたパスワードやトークンも残る可能性があります。不要な項目は履歴パネルから削除してください。パスワードマネージャーが機密マーカーを付けない場合、終了後もコピー内容が残ることがあります。
+
+履歴の永続保存は Noctalia 標準の Secret Service 経由で暗号化され、利用可能なキーリングが必要です。**プロバイダーがない・ロック中の場合、履歴は現在のセッション内のみで、終了すると失われます。** セットアップはキーリングの導入、PAM 変更、鍵の生成・共有、既存の秘密情報の移行を行いません。永続化したい場合は GNOME Keyring・KWallet・KeePassXC などのプロバイダーを別途設定し、Noctalia の「履歴ストレージ」で状態を確認してください。
 
 
 ## 日本語入力
@@ -163,6 +174,7 @@ Bash/Zsh ではログインプロファイルに `~/.local/bin` と `~/.bun/bin`
 
 ## 検証範囲
 
+- v1.5.0 は niri 26.04 / Noctalia 5.2.1 で、全画面・マウスでの範囲選択・矢印注釈の保存・範囲選択のキャンセルを実際に操作しました。キーボードフォーカスを持つ GTK/Wayland アプリで、撮影した PNG の保存データと実際の `image/png` クリップボードデータが一致しました。別の実アプリからコピーした2つの文章を履歴画面で確認し、古い文章を選ぶとライブのクリップボードへ戻ることも確認しました。Noctalia の撮影通知は5.000〜5.002秒で期限切れになりました。キーリングを使った再ログイン後の履歴復元と、v1.5.0 全体の root 実行は未確認です。
 - v1.4.0 の実機設定とセットアップが生成した設定は niri の検証を通過しました。通常セッションへ影響する `--session` やシェル自動起動を使わない隔離したネスト環境で、実際のウィンドウを使い、フォーカス・列移動・列の取り込み／分離・フローティング・ワークスペース間移動・Overview を IPC 経由で確認しました。Overview の実画面も確認しています。自動キー入力ではショートカットを発火できず、物理キーおよび複数モニターでの動作は未確認です。
 - v1.3.0 の実スクリプトのステージング処理を通常ユーザーで実行し、生成された niri・Noctalia 設定を実際のコマンドで検証しました。公開設定はバックライト名を固定せず、クリップボード履歴を無効にし、スクショ通知を5秒に設定しています。
 - 実機の Noctalia バーと日本語ランチャーを画面で確認しました。公開設定と同じ `brightness-up/down current 10%` が実バックライトを変更し、元の値へ戻せることを確認しました。実際のスクショ通知は5.01秒で期限切れになりました。
@@ -179,6 +191,8 @@ Bash/Zsh ではログインプロファイルに `~/.local/bin` と `~/.bun/bin`
 - [ArchWiki: Greetd](https://wiki.archlinux.org/title/Greetd)
 - [Noctalia: Installation](https://docs.noctalia.dev/noctalia/getting-started/installation/)
 - [Noctalia: Running Noctalia](https://docs.noctalia.dev/noctalia/getting-started/running-the-shell/)
+- [Noctalia: Screenshots](https://docs.noctalia.dev/noctalia/bar/widgets/screenshot/)
+- [Noctalia: Secret Service & keyrings](https://docs.noctalia.dev/noctalia/configuration/secret-service/)
 - [Fcitx: Using Fcitx 5 on Wayland](https://fcitx-im.org/wiki/Using_Fcitx_5_on_Wayland)
 - [ArchWiki: AUR helpers](https://wiki.archlinux.org/title/AUR_helpers)
 - [oh-my-pi](https://github.com/can1357/oh-my-pi)
