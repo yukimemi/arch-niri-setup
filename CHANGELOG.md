@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.4.0
+
+- Adopt niri 26.04's official active window/workspace bindings, including H/J/K/L navigation, numeric workspaces, monitor controls, column grouping, sizing, floating, tabs, overview and wheel controls.
+- Restore Ctrl-modified window/column movement and Shift-modified monitor focus; do not retain the conflicting old movement aliases.
+- Move Noctalia settings to Super+Ctrl+Comma so Super+Comma retains niri's column-grouping action.
+- Preserve Noctalia launcher/control-center, Chromium, Japanese IME, brightness and screenshot integrations; disable repeat for close-window and overview as in the official defaults.
+- Document the changed shortcuts and real compositor/UI verification limits.
+
 ## v1.3.0
 
 - Replace the default Waybar, mako, fuzzel and polkit-gnome startup with maintained native Noctalia from Arch extra; retain existing packages and running sessions.

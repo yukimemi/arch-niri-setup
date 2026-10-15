@@ -40,7 +40,7 @@ Live-ISO /root is volatile; authentication and work there are not preserved by r
 
 ## Desktop controls
 
-Super+T: terminal; Super+D: Noctalia launcher; Super+S: control center; Super+Comma: Noctalia settings; Super+B: Chromium; Super+Space: IME toggle; Super+arrows: navigate; Super+PageUp/PageDown: workspaces; Super+Shift+E: confirmed logout. Brightness keys use Noctalia in 10% steps with a 5% floor and automatic device discovery. Print: screenshot region; Ctrl+Print: screen; Alt+Print: window. Ctrl+Alt+F2 switches to a recovery text console. Normal-user `niri-session -l` starts a session from a TTY when no compositor is already running.
+Window/workspace controls follow niri 26.04's official default bindings. Super+arrows or H/J/K/L: focus; add Ctrl: move the column/window; add Shift instead: focus another monitor; Ctrl+Shift: move the column to another monitor. Super+1..9 or PageUp/PageDown: workspaces; Super+O: overview; Super+V: floating; Super+Comma/Period: consume/expel windows in a column; Super+Shift+Slash: hotkey overlay. Application additions: Super+T: terminal; Super+D: Noctalia launcher; Super+S: control center; Super+Ctrl+Comma: Noctalia settings; Super+B: Chromium; Super+Space: IME toggle. Super+Shift+E: confirmed logout. Brightness keys use Noctalia in 10% steps with a 5% floor and automatic device discovery. Print: screenshot region; Ctrl+Print: screen; Alt+Print: window. Ctrl+Alt+F2 switches to a recovery text console. Normal-user `niri-session -l` starts a session from a TTY when no compositor is already running.
 
 ## Japanese input and tools
 

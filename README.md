@@ -18,7 +18,7 @@ curl がなければ、先に `sudo pacman -Syu --needed curl` を実行して�
 通常ユーザーでログインして、`install.sh` がないディレクトリで以下を実行します。まずファイルとしてダウンロードし、成功した場合だけ sudo で実行します。
 
 ```bash
-curl -fLO https://github.com/yukimemi/arch-niri-setup/raw/v1.3.0/install.sh && sudo bash install.sh "$USER"
+curl -fLO https://github.com/yukimemi/arch-niri-setup/raw/v1.4.0/install.sh && sudo bash install.sh "$USER"
 ```
 
 終わったら、ダウンロードしたファイルは `rm install.sh` で削除できます。
@@ -55,23 +55,48 @@ Arch 公式 extra の `noctalia` を使います。旧 Quickshell 版ではな�
 
 ## niri のキー
 
+ウィンドウ・ワークスペース操作は、niri 26.04 の公式 `default-config.kdl` の有効な標準操作に合わせています。アプリ起動は Noctalia 用に差し替え、日本語入力・Chromium・明るさ操作を追加しています。公式サンプルの外部アプリ用ロック・音量・メディア操作は、この変更では追加しません。
+
+旧構成からの変更：`Super+Shift+矢印` はウィンドウ移動ではなくモニターへのフォーカス移動になります。ウィンドウ／列の移動は `Super+Ctrl+矢印` です。Noctalia 設定は列操作と衝突しない `Super+Ctrl+,` に移しました。
+
 | キー | 動作 |
 |---|---|
 | Super+T | ターミナル |
 | Super+D | Noctalia ランチャー |
 | Super+S | Noctalia コントロールセンター |
-| Super+, | Noctalia 設定 |
+| Super+Ctrl+, | Noctalia 設定 |
 | Super+B | Chromium |
 | Super+Space | IME オン／オフ切替 |
 | 明るさ小／大キー | Noctalia で10%刻み（下限5%） |
 | Print | スクショ範囲選択 |
 | Ctrl+Print | 選択中の画面を撮影 |
 | Alt+Print | 選択中のウィンドウを撮影 |
-| Super+矢印 | ウィンドウ移動 |
-| Super+PageUp / PageDown | ワークスペース移動 |
+| Super+(矢印 / H・J・K・L) | フォーカス移動（左右は列、上下は列内のウィンドウ） |
+| Super+Ctrl+(矢印 / H・J・K・L) | 列／ウィンドウを移動 |
+| Super+Shift+(矢印 / H・J・K・L) | 別モニターへフォーカス |
+| Super+Ctrl+Shift+(矢印 / H・J・K・L) | 列を別モニターへ移動 |
+| Super+(PageUp / PageDown / I / U) | ワークスペースへフォーカス |
+| Super+Ctrl+(PageUp / PageDown / I / U) | 列を別ワークスペースへ移動 |
+| Super+Shift+(PageUp / PageDown / I / U) | ワークスペースの順序を変更 |
+| Super+1〜9 | 番号でワークスペースへフォーカス |
+| Super+Ctrl+1〜9 | 列を指定ワークスペースへ移動 |
+| Super+O | 一覧表示（Overview） |
+| Super+Q | ウィンドウを閉じる（押しっぱなしで連続実行しない） |
+| Super+, / Super+. | 右のウィンドウを列に取り込む／列の下端を外へ出す |
+| Super+[ / Super+] | 選択中のウィンドウを左右の列へ取り込む／外へ出す |
+| Super+R / Super+Shift+R | 列幅プリセットを順／逆に切替 |
+| Super+F / Super+Shift+F | 列の最大化／ウィンドウの全画面表示 |
+| Super+M | ウィンドウを画面の端まで最大化 |
+| Super+C | 列を画面中央へ |
+| Super+- / Super+= | 列幅を10%ずつ縮小／拡大 |
+| Super+V | フローティングとタイル配置を切替 |
+| Super+Shift+V | フローティング／タイル側へフォーカス切替 |
+| Super+W | 列のタブ表示を切替 |
+| Super+Shift+/ | ショートカット一覧 |
 | Super+Shift+E | 確認付きログアウト |
 
 困った場合は Ctrl+Alt+F2 で TTY に切り替えられます。
+公式標準の Home/End、ホイール操作、ウィンドウ高さ調整、ショートカット抑止の切替、Ctrl+Alt+Delete の確認付きログアウト、Super+Shift+P の画面消灯も含みます。設定の全定義は `setup-niri.sh` の `binds` を参照してください。
 スクショは niri の標準機能で `~/Pictures/Screenshots/` に保存し、クリップボードにもコピーします。Noctalia の撮影機能が要求する別の screencopy プロトコルには依存しません。新規のスクショ保存ディレクトリは対象ユーザー所有・700 権限で作成します。
 
 
@@ -138,6 +163,7 @@ Bash/Zsh ではログインプロファイルに `~/.local/bin` と `~/.bun/bin`
 
 ## 検証範囲
 
+- v1.4.0 の実機設定とセットアップが生成した設定は niri の検証を通過しました。通常セッションへ影響する `--session` やシェル自動起動を使わない隔離したネスト環境で、実際のウィンドウを使い、フォーカス・列移動・列の取り込み／分離・フローティング・ワークスペース間移動・Overview を IPC 経由で確認しました。Overview の実画面も確認しています。自動キー入力ではショートカットを発火できず、物理キーおよび複数モニターでの動作は未確認です。
 - v1.3.0 の実スクリプトのステージング処理を通常ユーザーで実行し、生成された niri・Noctalia 設定を実際のコマンドで検証しました。公開設定はバックライト名を固定せず、クリップボード履歴を無効にし、スクショ通知を5秒に設定しています。
 - 実機の Noctalia バーと日本語ランチャーを画面で確認しました。公開設定と同じ `brightness-up/down current 10%` が実バックライトを変更し、元の値へ戻せることを確認しました。実際のスクショ通知は5.01秒で期限切れになりました。
 - v1.2.0 の `setup-niri.sh` を、実際の x86_64 Arch/Btrfs の root を読み取り専用にし、HOME・pacman DB・サービス設定を分離した環境で最後まで実行しました。実機の設定を上書きせず、通常ユーザーへの設定保存と niri による検証を確認しました。
